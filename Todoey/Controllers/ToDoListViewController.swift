@@ -3,15 +3,27 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
     
-    var myItem = ["Hello", "How are you ?" , "Good morning !"]
+    //    var myItem = ["Hello", "How are you ?" , "Good morning !"]
+    var myItem = [Item]()
+    
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("listItem.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(dataFilePath as Any)
         let library_path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
         print("library path is \(library_path)")
-        // Do any additional setup after loading the view.
-        if let items = UserDefaults.standard.array(forKey: "listItem") as? [String] {
+        //persist
+        if let items = UserDefaults.standard.array(forKey: "listItem") as? [Item] {
             myItem = items
+        }
+        if let data = try? Data(contentsOf: dataFilePath!){
+            let decoder = PropertyListDecoder()
+            do{
+                myItem = try decoder.decode([Item].self, from: data)
+            }catch {
+                print("can't decoder");
+            }
         }
     }
     
@@ -25,9 +37,18 @@ class ToDoListViewController: UITableViewController {
             (action) in
             //code
             print("\(textFieldResult.text ?? "")")
+            self.myItem.append(Item(title: textFieldResult.text!, status: false))
+            
+            print("\(self.myItem)")
+            
+            let encoder = PropertyListEncoder()
+            do {
+                let data = try encoder.encode(self.myItem)
+                try data.write(to : self.dataFilePath!)
+            }catch {
+                print("can't encode")
+            }
             DispatchQueue.main.async {
-                self.myItem.append(textFieldResult.text!)
-                UserDefaults.standard.set(self.myItem, forKey: "listItem")
                 self.tableView.reloadData()
             }
         })
@@ -48,17 +69,18 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "toDoList", for: indexPath)
-        
-        cell.textLabel?.text = myItem[indexPath.row]
+        let item = myItem[indexPath.row]
+        cell.textLabel?.text = item.title
+        cell.accessoryType = item.status == true ? .checkmark :.none
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if(tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark){
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }else{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        let item = myItem[indexPath.row]
+        myItem[indexPath.row].status = !(item.status!)
+        DispatchQueue.main.async {
+            tableView.reloadData()
         }
     }
 }
