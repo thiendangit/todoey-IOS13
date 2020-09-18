@@ -22,7 +22,7 @@ class ToDoListViewController: UITableViewController, UISearchBarDelegate {
         if let items = UserDefaults.standard.array(forKey: "listItem") as? [Item] {
             myItem = items
         }
-       loadItem()
+        loadItem()
     }
     
     //    Add Item
@@ -94,10 +94,20 @@ class ToDoListViewController: UITableViewController, UISearchBarDelegate {
 }
 
 extension ToDoListViewController {
-    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
         print(searchBar.text ?? "TEXT")
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        request.predicate = predicate
+        let sortDescriptors = NSSortDescriptor(key: "title", ascending: true)
+        request.sortDescriptors = [sortDescriptors]
+        
+        do {
+            myItem = try context.fetch(request)
+        } catch {
+            print("Can't load Data \(error)")
+        }
+        tableView.reloadData()
     }
 }
 
