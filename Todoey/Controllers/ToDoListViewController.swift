@@ -1,10 +1,14 @@
 
 import UIKit
+import CoreData
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: UITableViewController, UISearchBarDelegate {
     
+    @IBOutlet weak var searchBar: UISearchBar!
     //    var myItem = ["Hello", "How are you ?" , "Good morning !"]
     var myItem = [Item]()
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("listItem.plist")
     
@@ -14,17 +18,11 @@ class ToDoListViewController: UITableViewController {
         let library_path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
         print("library path is \(library_path)")
         //persist
+        searchBar.delegate = self
         if let items = UserDefaults.standard.array(forKey: "listItem") as? [Item] {
             myItem = items
         }
-        if let data = try? Data(contentsOf: dataFilePath!){
-            let decoder = PropertyListDecoder()
-            do{
-                myItem = try decoder.decode([Item].self, from: data)
-            }catch {
-                print("can't decoder");
-            }
-        }
+       loadItem()
     }
     
     //    Add Item
@@ -37,20 +35,11 @@ class ToDoListViewController: UITableViewController {
             (action) in
             //code
             print("\(textFieldResult.text ?? "")")
-            self.myItem.append(Item(title: textFieldResult.text!, status: false))
-            
-            print("\(self.myItem)")
-            
-            let encoder = PropertyListEncoder()
-            do {
-                let data = try encoder.encode(self.myItem)
-                try data.write(to : self.dataFilePath!)
-            }catch {
-                print("can't encode")
-            }
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+            let newItem = Item(context: self.context)
+            newItem.title = textFieldResult.text!
+            newItem.status = false
+            self.myItem.append(newItem)
+            self.saveItem()
         })
         
         alert.addTextField(configurationHandler: {
@@ -78,10 +67,37 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let item = myItem[indexPath.row]
-        myItem[indexPath.row].status = !(item.status!)
+        myItem[indexPath.row].status = !(item.status)
         DispatchQueue.main.async {
             tableView.reloadData()
         }
+    }
+    
+    func saveItem() {
+        do {
+            try context.save()
+        }catch {
+            print("can't encode : \(error)");
+        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    func loadItem() {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        do{
+            myItem = try context.fetch(request)
+        } catch {
+            print("can't decoder : \(error)");
+        }
+    }
+}
+
+extension ToDoListViewController {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        print(searchBar.text ?? "TEXT")
     }
 }
 
