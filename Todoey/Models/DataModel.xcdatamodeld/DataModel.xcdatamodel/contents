@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CategoryData" representedClassName=".CategoryData" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="items" toMany="YES" deletionRule="Nullify" destinationEntity="Item" inverseName="parentCategory" inverseEntity="Item"/>
+    </entity>
     <entity name="Item" representedClassName=".Item" syncable="YES" codeGenerationType="class">
         <attribute name="status" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
+        <relationship name="parentCategory" maxCount="1" deletionRule="Nullify" destinationEntity="CategoryData" inverseName="items" inverseEntity="CategoryData"/>
     </entity>
     <elements>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="73"/>
+        <element name="Item" positionX="111.7578125" positionY="-13.4453125" width="128" height="88"/>
+        <element name="CategoryData" positionX="-234.30078125" positionY="-2.02734375" width="128" height="73"/>
     </elements>
 </model>

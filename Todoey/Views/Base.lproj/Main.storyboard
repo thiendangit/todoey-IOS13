@@ -48,7 +48,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SSX-oT-Dd9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1723.1884057971015" y="138.61607142857142"/>
+            <point key="canvasLocation" x="2399" y="139"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="9Ab-Yv-T0D">
@@ -62,12 +62,51 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="dh9-Hc-Rsk" kind="relationship" relationship="rootViewController" id="PVg-3f-7ZI"/>
+                        <segue destination="jkg-he-Gio" kind="relationship" relationship="rootViewController" id="P3Y-vC-J9a"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bvv-TP-Qq8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="813.04347826086962" y="138.61607142857142"/>
+        </scene>
+        <!--Category-->
+        <scene sceneID="X3I-pn-UNe">
+            <objects>
+                <tableViewController id="jkg-he-Gio" customClass="CategorysScreen" customModule="Todoey" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="n02-3B-t6q">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="homeScreen" id="qlR-cs-6Dn">
+                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="qlR-cs-6Dn" id="Cog-II-bOb">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="jkg-he-Gio" id="3io-ec-qKO"/>
+                            <outlet property="delegate" destination="jkg-he-Gio" id="Te5-H4-YOF"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Category" id="bee-J1-gtk">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="4dl-WP-3FT">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="addNewItem:" destination="jkg-he-Gio" id="REz-os-QFg"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <segue destination="dh9-Hc-Rsk" kind="show" identifier="goToDetails" id="vtq-Rw-e5P"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Iv9-Oa-EHI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1613" y="139"/>
         </scene>
     </scenes>
 </document>
