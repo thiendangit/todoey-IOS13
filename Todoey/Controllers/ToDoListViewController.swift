@@ -21,6 +21,7 @@ class ToDoListViewController: SwipeTableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         print(dataFilePath as Any)
+        title = withCategory?.name
         let library_path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
         print("library path is \(library_path)")
         //persist
@@ -30,6 +31,9 @@ class ToDoListViewController: SwipeTableViewController, UISearchBarDelegate {
         //        }
         loadItem(predicate: nil)
         print("category \(withCategory?.name ?? "data")")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
     }
     
     //    Add Item

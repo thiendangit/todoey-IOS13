@@ -21,6 +21,7 @@ class CategorysScreen: SwipeTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.separatorStyle = .none
         loadCategory()
     }
     
@@ -97,7 +98,7 @@ class CategorysScreen: SwipeTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = categories?[indexPath.row].name
-        cell.backgroundColor = UIColor(gradientStyle: .leftToRight, withFrame: CGRect(x: 0.3, y: 0.5, width: cell.bounds.width , height : cell.bounds.height), andColors:[UIColor.randomFlat(),UIColor.flatBlue()])
+        cell.backgroundColor = UIColor(gradientStyle: .leftToRight, withFrame: CGRect(x: 0, y: 0, width: cell.bounds.width , height : cell.bounds.height ), andColors:[UIColor.randomFlat(),UIColor.flatBlue()])
         return cell
     }
     
