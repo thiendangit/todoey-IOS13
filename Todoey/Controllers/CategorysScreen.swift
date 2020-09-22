@@ -8,11 +8,13 @@
 
 import Foundation
 import UIKit
-import CoreData
+//import CoreData
+import RealmSwift
 
 class CategorysScreen: UITableViewController  {
-    
-    var categories = [CategoryData]()
+    let realm = try! Realm()
+    //    var categories = [CategoryData]()
+    var categories : Results<CategoryRealm>?
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
@@ -29,10 +31,11 @@ class CategorysScreen: UITableViewController  {
             (action) in
             //code
             print("\(textFieldResult.text ?? "")")
-            let newCategory = CategoryData(context: self.context)
+            //            let newCategory = CategoryData(context: self.context)
+            let newCategory = CategoryRealm()
             newCategory.name = textFieldResult.text!
-            self.categories.append(newCategory)
-            self.saveCategory()
+            //            self.categories!.append(newCategory)
+            self.saveCategory(category : newCategory)
         })
         
         alert.addTextField(configurationHandler: {
@@ -46,9 +49,12 @@ class CategorysScreen: UITableViewController  {
     }
     
     
-    func saveCategory() {
+    func saveCategory(category : CategoryRealm) {
         do {
-            try context.save()
+            //            try context.save()
+            try realm.write{
+                realm.add(category)
+            }
         }catch {
             print("can't encode : \(error)");
         }
@@ -57,21 +63,22 @@ class CategorysScreen: UITableViewController  {
         }
     }
     
-    func loadCategory(with request : NSFetchRequest<CategoryData> = CategoryData.fetchRequest()) {
-        do{
-            categories = try context.fetch(request)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        } catch{
-            print(error)
-        }
+    func loadCategory() {
+        categories = realm.objects(CategoryRealm.self)
+        //        do{
+        //            categories = try context.fetch(request)
+        //            DispatchQueue.main.async {
+        //                self.tableView.reloadData()
+        //            }
+        //        } catch{
+        //            print(error)
+        //        }
     }
     
     //tableCell DataSource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return categories?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -82,13 +89,13 @@ class CategorysScreen: UITableViewController  {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vcDestination = segue.destination as! ToDoListViewController
         if let indexPath = self.tableView.indexPathForSelectedRow{
-            vcDestination.withCategory = categories[indexPath.row]
+            vcDestination.withCategory = categories?[indexPath.row]
         }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "homeScreen" , for: indexPath)
-        cell.textLabel?.text = categories[indexPath.row].name
+        cell.textLabel?.text = categories?[indexPath.row].name
         return cell
     }
 }
