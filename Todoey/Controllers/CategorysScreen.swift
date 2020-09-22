@@ -10,8 +10,10 @@ import Foundation
 import UIKit
 //import CoreData
 import RealmSwift
+import SwipeCellKit
 
-class CategorysScreen: UITableViewController  {
+class CategorysScreen: UITableViewController {
+    
     let realm = try! Realm()
     //    var categories = [CategoryData]()
     var categories : Results<CategoryRealm>?
@@ -19,7 +21,6 @@ class CategorysScreen: UITableViewController  {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         loadCategory()
     }
     
@@ -94,8 +95,36 @@ class CategorysScreen: UITableViewController  {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "homeScreen" , for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "homeScreen" , for: indexPath) as! SwipeTableViewCell
         cell.textLabel?.text = categories?[indexPath.row].name
+        cell.delegate = self
         return cell
+    }
+}
+
+extension CategorysScreen : SwipeTableViewCellDelegate {
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            // handle action by updating model with deletion
+            if let categoryForDelete = self.categories?[indexPath.row] {
+                do {
+                    try self.realm.write {
+                        self.realm.delete(categoryForDelete)
+                    }
+                } catch {
+                    
+                }
+            }
+        }
+        // customize the action appearance
+        deleteAction.image = UIImage(systemName:"delete.right")
+        return [deleteAction]
+    }
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.expansionStyle = .destructive
+        options.transitionStyle = .border
+        return options
     }
 }
