@@ -3,7 +3,7 @@ import UIKit
 import CoreData
 import RealmSwift
 
-class ToDoListViewController: UITableViewController, UISearchBarDelegate {
+class ToDoListViewController: SwipeTableViewController, UISearchBarDelegate {
     
     @IBOutlet weak var searchBar: UISearchBar!
     //    var myItem = ["Hello", "How are you ?" , "Good morning !"]
@@ -78,10 +78,14 @@ class ToDoListViewController: UITableViewController, UISearchBarDelegate {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "toDoList", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = myItem?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.status == true ? .checkmark :.none
+            if let color = UIColor.flatYellow().darken(byPercentage: CGFloat(indexPath.row) / CGFloat(myItem!.count)) {
+                cell.backgroundColor = UIColor(gradientStyle: .topToBottom, withFrame: CGRect(x: 0, y: 0, width: cell.bounds.width , height : 80 ), andColors:[color,UIColor.flatPink()])
+                cell.textLabel?.textColor = UIColor(contrastingBlackOrWhiteColorOn:color, isFlat:true)
+            }
         }else{
             cell.textLabel?.text = "no check"
         }
@@ -136,6 +140,19 @@ class ToDoListViewController: UITableViewController, UISearchBarDelegate {
         //        } catch {
         //            print("can't decoder : \(error)");
         //        }
+    }
+    
+    override func handleSwpipe(at indexPath: IndexPath) {
+        super.handleSwpipe(at: indexPath)
+        if let itemForDelele = myItem?[indexPath.row] {
+            do {
+                try self.realm.write{
+                    self.realm.delete(itemForDelele)
+                }
+            } catch {
+                print("error in deleting item : \(error)")
+            }
+        }
     }
 }
 
